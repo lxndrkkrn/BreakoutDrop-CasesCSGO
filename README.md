@@ -1,4 +1,4 @@
-# Breakout-Drop : Cases CSGO
+# Breakout-Drop : Cases CS2
 Проект BreakoutDrop v1.3
 
 ### Стек:
