@@ -1,15 +1,13 @@
 package org.example.breakoutdrop.Entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -46,10 +44,13 @@ public class User {
 
     @NotNull
     @Column(nullable = false)
-    @Positive(message = "Баланс не может быть отрицательным")
+    @PositiveOrZero(message = "Баланс не может быть отрицательным")
     private BigDecimal balance = new BigDecimal(0);
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Inventory> inventory;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
 
 }

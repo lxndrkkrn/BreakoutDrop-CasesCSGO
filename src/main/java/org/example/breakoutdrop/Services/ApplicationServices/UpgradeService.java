@@ -1,11 +1,15 @@
 package org.example.breakoutdrop.Services.ApplicationServices;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateInventoryDTO;
 import org.example.breakoutdrop.DTOs.OpeningUpgradeDTO;
 import org.example.breakoutdrop.Entities.Inventory;
 import org.example.breakoutdrop.Entities.Skin;
+import org.example.breakoutdrop.Entities.SystemWallet;
 import org.example.breakoutdrop.Entities.User;
+import org.example.breakoutdrop.Errors.ServerHTTP.ServiceUnavailable503;
+import org.example.breakoutdrop.Repositories.SystemWalletRepository;
 import org.example.breakoutdrop.Services.DomainServices.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 
 public class UpgradeService {
 
@@ -24,18 +29,15 @@ public class UpgradeService {
     private final SkinService skinService;
     private final InventoryService inventoryService;
 
-    private final TransactionService transactionService;
+    private final SystemWalletRepository systemWalletRepository;
 
-    public UpgradeService(CaseService caseService, UserService userService, SkinService skinService, InventoryService inventoryService, TransactionService transactionService) {
-        this.caseService = caseService;
-        this.userService = userService;
-        this.skinService = skinService;
-        this.inventoryService = inventoryService;
-        this.transactionService = transactionService;
-    }
+    private final TransactionService transactionService;
 
     private static final BigDecimal MAX_UPGRADE_CHANCE = new BigDecimal("0.75");
     private static final BigDecimal MIN_UPGRADE_CHANCE = new BigDecimal("0.01");
+
+    private final SystemWallet wallet = systemWalletRepository.findById(1L).orElseThrow(() -> new ServiceUnavailable503("Нет доступного сейфа"));
+    private final BigDecimal prizePool = wallet.getPrizePool();
 
     @Transactional
     public void upgradeSkin(OpeningUpgradeDTO openingUpgradeDTO) {
@@ -68,10 +70,12 @@ public class UpgradeService {
 
             inventoryService.deleteInventoryById(inventoryItem.getId());
 
-            if (winningUpgrade(winningPercentage)) {
+            if (winningUpgrade(winningPercentage, wonSkin)) {
 
                 CreateInventoryDTO createInventoryDTO = new CreateInventoryDTO(user.getId(), wonSkin.getId());
                 inventoryService.createInventory(createInventoryDTO);
+
+                wallet.setPrizePool(wallet.getPrizePool().subtract(wonSkin.getPrice()));
 
                 log.info("Апгрейд успешный, скин добавлен в инвентарь");
 
@@ -86,7 +90,11 @@ public class UpgradeService {
         }
     }
 
-    private boolean winningUpgrade(BigDecimal winningPercentage) {
+    private boolean winningUpgrade(BigDecimal winningPercentage, Skin wonSkin) {
+
+        if (wonSkin.getPrice().compareTo(wallet.getPrizePool()) >= 0) {
+            return false;
+        }
 
         double chanceThreshold = winningPercentage.doubleValue();
         double randomShot = ThreadLocalRandom.current().nextDouble();

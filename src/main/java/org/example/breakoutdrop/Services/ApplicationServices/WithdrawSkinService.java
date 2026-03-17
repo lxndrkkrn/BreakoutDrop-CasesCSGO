@@ -1,5 +1,6 @@
 package org.example.breakoutdrop.Services.ApplicationServices;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.SellSkinDTO;
 import org.example.breakoutdrop.Entities.Inventory;
@@ -9,10 +10,9 @@ import org.example.breakoutdrop.Services.DomainServices.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-
 @Service
 @Slf4j
+@RequiredArgsConstructor
 
 public class WithdrawSkinService {
 
@@ -22,14 +22,6 @@ public class WithdrawSkinService {
     private final InventoryService inventoryService;
 
     private final TransactionService transactionService;
-
-    public WithdrawSkinService(CaseService caseService, UserService userService, SkinService skinService, InventoryService inventoryService, TransactionService transactionService) {
-        this.caseService = caseService;
-        this.userService = userService;
-        this.skinService = skinService;
-        this.inventoryService = inventoryService;
-        this.transactionService = transactionService;
-    }
 
     @Transactional
     public void withdrawSkin(SellSkinDTO sellSkinDTO) {

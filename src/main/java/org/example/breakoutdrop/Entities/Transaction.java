@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.breakoutdrop.Enums.TransactionType;
 
 import java.math.BigDecimal;
+import java.security.PrivilegedAction;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,29 +21,16 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Enumerated(EnumType.STRING)
+    private TransactionType transactionType;
 
     @NotNull
     @Column(nullable = false)
-    private Long caseId;
-
-    @NotNull
-    @Column(nullable = false)
-    private Long wonSkinId;
-
-    @NotNull
-    @Column(nullable = false)
-    private BigDecimal oldBalance;
-
-    @NotNull
-    @Column(nullable = false)
-    private BigDecimal newBalance;
-
-    @NotNull
-    @Column(nullable = false)
-    private BigDecimal deltaBalance;
+    private BigDecimal amount;
 
     @NotNull
     @Column(nullable = false)

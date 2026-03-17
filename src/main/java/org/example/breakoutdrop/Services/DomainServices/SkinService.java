@@ -1,5 +1,6 @@
 package org.example.breakoutdrop.Services.DomainServices;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateSkinDTO;
 import org.example.breakoutdrop.Entities.Case;
@@ -16,18 +17,13 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 
 public class SkinService {
 
     private final UserRepository userRepository;
     private final SkinRepository skinRepository;
     private final CaseRepository caseRepository;
-
-    public SkinService(UserRepository userRepository, SkinRepository skinRepository, CaseRepository caseRepository) {
-        this.userRepository = userRepository;
-        this.skinRepository = skinRepository;
-        this.caseRepository = caseRepository;
-    }
 
     @Transactional
     public void createSkin(CreateSkinDTO createSkinDTO) {

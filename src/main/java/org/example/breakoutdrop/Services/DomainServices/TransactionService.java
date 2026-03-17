@@ -1,8 +1,15 @@
 package org.example.breakoutdrop.Services.DomainServices;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.breakoutdrop.Entities.SystemWallet;
 import org.example.breakoutdrop.Entities.Transaction;
+import org.example.breakoutdrop.Entities.User;
+import org.example.breakoutdrop.Enums.TransactionType;
+import org.example.breakoutdrop.Errors.ServerHTTP.ServiceUnavailable503;
+import org.example.breakoutdrop.Repositories.SystemWalletRepository;
 import org.example.breakoutdrop.Repositories.TransactionRepository;
+import org.example.breakoutdrop.Repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,35 +17,40 @@ import java.math.BigDecimal;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final UserService userService;
+    private SystemWalletRepository systemWalletRepository;
 
-    public TransactionService(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
+    @Transactional
+    public void processDeposit(Long userId, BigDecimal amount) {
+        User user = userService.findUserById(userId);
+        SystemWallet wallet = systemWalletRepository.findWithLock().orElseThrow(() -> new ServiceUnavailable503("Нет доступных сейфов"));
+
+        BigDecimal companyProfit = amount.multiply(new BigDecimal("0.20"));
+        BigDecimal userNetDeposit = amount.subtract(companyProfit);
+
+        createTransaction(user, amount, TransactionType.DEPOSIT);
+        createTransaction(user, companyProfit.negate(), TransactionType.SERVICE_FEE);
+
+        wallet.setTotalProfit(wallet.getTotalProfit().add(companyProfit));
+        wallet.setPrizePool(wallet.getPrizePool().add(userNetDeposit));
+
+        log.info("Депозит: Юзер {} +{}, Доход казино +{}, Пул +{}",
+                userId, userNetDeposit, companyProfit, userNetDeposit);
     }
 
     @Transactional
-    public void createTransactionLog(Long userId,
-                                     Long caseId,
-                                     Long wonSkinId,
-                                     BigDecimal oldBalance,
-                                     BigDecimal newBalance,
-                                     BigDecimal deltaBalance) {
-
+    public void createTransaction(User user, BigDecimal amount, TransactionType transactionType) {
         Transaction transaction = new Transaction();
-
-        transaction.setUserId(userId);
-        transaction.setCaseId(caseId);
-        transaction.setWonSkinId(wonSkinId);
-        transaction.setOldBalance(oldBalance);
-        transaction.setNewBalance(newBalance);
-        transaction.setDeltaBalance(deltaBalance);
+        transaction.setTransactionType(transactionType);
+        transaction.setAmount(amount);
+        transaction.setUser(user);
 
         transactionRepository.save(transaction);
-        log.info("Транзакция сохранена: ID {}; Date {}", transaction.getId(), transaction.getLocalDateTime());
-
     }
 
 }

@@ -1,5 +1,6 @@
 package org.example.breakoutdrop.Services.DomainServices;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateInventoryDTO;
 import org.example.breakoutdrop.Entities.Inventory;
@@ -12,23 +13,17 @@ import org.example.breakoutdrop.Repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
     private final SkinRepository skinRepository;
     private final UserRepository userRepository;
-
-    public InventoryService(InventoryRepository inventoryRepository, SkinRepository skinRepository, UserRepository userRepository) {
-        this.inventoryRepository = inventoryRepository;
-        this.skinRepository = skinRepository;
-        this.userRepository = userRepository;
-    }
 
     @Transactional
     public void createInventory(CreateInventoryDTO createInventoryDTO) {

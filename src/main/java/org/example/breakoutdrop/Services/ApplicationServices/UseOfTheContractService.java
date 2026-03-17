@@ -1,12 +1,16 @@
 package org.example.breakoutdrop.Services.ApplicationServices;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateInventoryDTO;
 import org.example.breakoutdrop.DTOs.OpeningContractDTO;
 import org.example.breakoutdrop.Entities.Inventory;
 import org.example.breakoutdrop.Entities.Skin;
+import org.example.breakoutdrop.Entities.SystemWallet;
 import org.example.breakoutdrop.Entities.User;
 import org.example.breakoutdrop.Errors.Client.InvalidValue;
+import org.example.breakoutdrop.Errors.ServerHTTP.ServiceUnavailable503;
+import org.example.breakoutdrop.Repositories.SystemWalletRepository;
 import org.example.breakoutdrop.Services.DomainServices.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +19,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 
 public class UseOfTheContractService {
 
@@ -29,23 +32,19 @@ public class UseOfTheContractService {
     private final InventoryService inventoryService;
 
     private final TransactionService transactionService;
+    private final SystemWalletRepository systemWalletRepository;
 
-    public UseOfTheContractService(CaseService caseService, UserService userService, SkinService skinService, InventoryService inventoryService, TransactionService transactionService) {
-        this.caseService = caseService;
-        this.userService = userService;
-        this.skinService = skinService;
-        this.inventoryService = inventoryService;
-        this.transactionService = transactionService;
-    }
-
-//    private final BigDecimal maxCoefficient = new BigDecimal("2.5");
-//    private final BigDecimal minCoefficient = new BigDecimal("2.5");
+    //    private final BigDecimal maxCoefficient = new BigDecimal("2.5");
+    //    private final BigDecimal minCoefficient = new BigDecimal("2.5");
     private final BigDecimal coefficient = new BigDecimal("2.5");
 
     private final BigDecimal minPriceSum = new BigDecimal("30");
     private final BigDecimal maxPriceSum = new BigDecimal("50000");
 
     private final SecureRandom secureRandom = new SecureRandom();
+
+    private final SystemWallet wallet = systemWalletRepository.findById(1L).orElseThrow(() -> new ServiceUnavailable503("Нет доступного сейфа"));
+    private final BigDecimal prizePool = wallet.getPrizePool();
 
     @Transactional
     public void useOfTheContractService(OpeningContractDTO openingContractDTO) {
@@ -79,6 +78,8 @@ public class UseOfTheContractService {
 
             CreateInventoryDTO createInventoryDTO = new CreateInventoryDTO(user.getId(), wonSkin.getId());
 
+            wallet.setPrizePool(wallet.getPrizePool().subtract(wonSkin.getPrice()));
+
             inventoryService.deleteAll(usedInventories);
             inventoryService.createInventory(createInventoryDTO);
 
@@ -97,9 +98,11 @@ public class UseOfTheContractService {
 
     }
 
-    private Skin getRandomSkin(BigDecimal maxPrice, BigDecimal minPrice) {
+    private Skin getRandomSkin(BigDecimal maxPriceNP, BigDecimal minPrice) {
 
         double randomMultiplier = secureRandom.nextDouble();
+
+        BigDecimal maxPrice = wallet.getPrizePool();
 
         BigDecimal priceDiff = maxPrice.subtract(minPrice);
         BigDecimal randomPrice = minPrice.add(priceDiff.multiply(BigDecimal.valueOf(randomMultiplier)));

@@ -1,5 +1,6 @@
 package org.example.breakoutdrop.Services.DomainServices;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateUserDTO;
 import org.example.breakoutdrop.Entities.User;
@@ -14,14 +15,11 @@ import java.math.BigDecimal;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 
 public class UserService {
 
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Transactional
     public void createUser(CreateUserDTO createUserDTO) {
@@ -81,7 +79,7 @@ public class UserService {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void addBalanceToUser(Long id, BigDecimal deltaBalance) {
-        log.info("Попытка пополнения баланся пользователю");
+        log.info("Попытка добавления баланся пользователю");
         try {
             User user = userRepository.findById(id).orElseThrow(() -> new NotFound404("Пользователь не найден"));
             BigDecimal userBalance = user.getBalance();
@@ -90,9 +88,9 @@ public class UserService {
 
             userRepository.save(user);
 
-            log.info("Баланс успешно пополнен");
+            log.info("Баланс успешно добавлен");
         } catch (Exception e) {
-            log.error("Ошибка при пополнении баланса");
+            log.error("Ошибка при добавлении баланса");
             throw e;
         }
     }

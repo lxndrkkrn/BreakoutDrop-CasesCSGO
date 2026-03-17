@@ -1,13 +1,17 @@
 package org.example.breakoutdrop.Services.ApplicationServices;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateInventoryDTO;
 import org.example.breakoutdrop.DTOs.OpeningCaseDTO;
 import org.example.breakoutdrop.Entities.Case;
 import org.example.breakoutdrop.Entities.Skin;
+import org.example.breakoutdrop.Entities.SystemWallet;
 import org.example.breakoutdrop.Entities.User;
 import org.example.breakoutdrop.Errors.Client.NegativeBalance;
 import org.example.breakoutdrop.Errors.Server.CaseIsEmpty;
+import org.example.breakoutdrop.Errors.ServerHTTP.ServiceUnavailable503;
+import org.example.breakoutdrop.Repositories.SystemWalletRepository;
 import org.example.breakoutdrop.Services.DomainServices.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +22,7 @@ import java.util.Random;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 
 public class OpenCaseService {
 
@@ -26,15 +31,12 @@ public class OpenCaseService {
     private final SkinService skinService;
     private final InventoryService inventoryService;
 
+    private final SystemWalletRepository systemWalletRepository;
+
     //private final TransactionService transactionService;
 
-    public OpenCaseService(CaseService caseService, UserService userService, SkinService skinService, InventoryService inventoryService, TransactionService transactionService) {
-        this.caseService = caseService;
-        this.userService = userService;
-        this.skinService = skinService;
-        this.inventoryService = inventoryService;
-        //this.transactionService = transactionService;
-    }
+    private final SystemWallet wallet = systemWalletRepository.findById(1L).orElseThrow(() -> new ServiceUnavailable503("Нет доступного сейфа"));
+    private final BigDecimal prizePool = wallet.getPrizePool();
 
     @Transactional
     public void userOpeningCase(OpeningCaseDTO openingCaseDTO) {
@@ -67,15 +69,11 @@ public class OpenCaseService {
         }
     }
 
-    private void takeBalance(Long id, BigDecimal deltaBalance) {
-        userService.takeBalanceToUser(id, deltaBalance);
-    }
-
     private Skin skinCalculation(Case openingCase) {
         log.info("Попытка выбора скина из кейса");
         try {
-
-            List<Skin> skinList = openingCase.getSkinList();
+            List<Skin> fullSkinList = openingCase.getSkinList();
+            List<Skin> skinList = fullSkinList.stream().filter(skin -> skin.getPrice().compareTo(prizePool) <= 0).toList();
 
             if (skinList.isEmpty()) {
                 throw new CaseIsEmpty("Кейс '" + openingCase.getName() + "' пуст! Добавьте скины.");
@@ -85,10 +83,16 @@ public class OpenCaseService {
             double randomValue = new Random().nextDouble() * totalChance;
 
             double currentSum = 0;
+
             for (Skin skin : skinList) {
+
                 currentSum += skinService.getChanceSkinBySkin(skin);
+
                 if (randomValue <= currentSum) {
+
+                    wallet.setPrizePool(wallet.getPrizePool().subtract(skin.getPrice()));
                     return skin; // "Успешный" скин - передаётся наверх
+
                 }
             }
             log.info("Скин выбран и передан");
@@ -98,6 +102,10 @@ public class OpenCaseService {
             log.error("Ошибка при выборе скина из кейса");
             throw e;
         }
+    }
+
+    private void takeBalance(Long id, BigDecimal deltaBalance) {
+        userService.takeBalanceToUser(id, deltaBalance);
     }
 
 }
