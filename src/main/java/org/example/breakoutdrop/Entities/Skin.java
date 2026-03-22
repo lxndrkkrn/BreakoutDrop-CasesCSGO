@@ -29,6 +29,7 @@ public class Skin {
     private String name;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private WeaponType type;
 
     @NotNull
@@ -37,6 +38,7 @@ public class Skin {
     private BigDecimal price;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private SkinsRarity rarity;
 
     @NotNull

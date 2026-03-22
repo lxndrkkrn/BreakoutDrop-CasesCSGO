@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.Errors.Client.*;
 import org.example.breakoutdrop.Errors.ClientHTTP.*;
 import org.example.breakoutdrop.Errors.Server.CaseIsEmpty;
+import org.example.breakoutdrop.Errors.Server.ImpossibleContract;
 import org.example.breakoutdrop.Errors.ServerHTTP.NotImplemented501;
 import org.example.breakoutdrop.Errors.ServerHTTP.ServiceUnavailable503;
 import org.example.breakoutdrop.Responses.AllErrorResponse;
@@ -260,6 +261,20 @@ public class GlobalExceptionHandler {
 
         log.warn("Ошибка пользователя: {}; Сообщение: {}", errorResponse.error(), ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ImpossibleContract.class)
+    public ResponseEntity<AllErrorResponse> handleImpossibleContract(ImpossibleContract ex) {
+
+        AllErrorResponse errorResponse = new AllErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                "Impossible Contract",
+                ex.getMessage()
+        );
+
+        log.warn("Ошибка сервера: {}; Сообщение: {}", errorResponse.error(), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
 }

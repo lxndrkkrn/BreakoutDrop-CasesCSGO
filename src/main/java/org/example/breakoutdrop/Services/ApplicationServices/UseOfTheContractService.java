@@ -10,6 +10,7 @@ import org.example.breakoutdrop.Entities.SystemWallet;
 import org.example.breakoutdrop.Entities.User;
 import org.example.breakoutdrop.Enums.TransactionType;
 import org.example.breakoutdrop.Errors.Client.InvalidValue;
+import org.example.breakoutdrop.Errors.Server.ImpossibleContract;
 import org.example.breakoutdrop.Errors.ServerHTTP.ServiceUnavailable503;
 import org.example.breakoutdrop.Repositories.SystemWalletRepository;
 import org.example.breakoutdrop.Services.DomainServices.*;
@@ -72,7 +73,14 @@ public class UseOfTheContractService {
             }
 
             BigDecimal maxPrice = priceSum.multiply(coefficient);
+            if (wallet.getPrizePool().compareTo(maxPrice) <= 0) {
+                maxPrice = wallet.getPrizePool();
+            }
+
             BigDecimal minPrice = priceSum.divide(coefficient, 0, RoundingMode.HALF_UP);
+            if (maxPrice.compareTo(minPrice) <= 0) {
+                throw new ImpossibleContract("Пока что создать такой контракт не получится");
+            }
 
             Skin wonSkin = getRandomSkin(wallet, minPrice, maxPrice);
 
@@ -99,11 +107,11 @@ public class UseOfTheContractService {
 
     private Skin getRandomSkin(SystemWallet wallet, BigDecimal minPrice, BigDecimal maxPrice) {
 
-        BigDecimal randomMultiplier = new BigDecimal(secureRandom.toString());
+        BigDecimal randomMultiplier = BigDecimal.valueOf(secureRandom.nextDouble());
 
-        if (maxPrice.compareTo(wallet.getPrizePool()) >= 0) {
-            maxPrice = wallet.getPrizePool();
-        }
+//        if (maxPrice.compareTo(wallet.getPrizePool()) >= 0) {
+//            maxPrice = wallet.getPrizePool();
+//        }
 
         BigDecimal priceDiff = maxPrice.subtract(minPrice);
         BigDecimal randomPrice = minPrice.add(priceDiff.multiply(randomMultiplier));
