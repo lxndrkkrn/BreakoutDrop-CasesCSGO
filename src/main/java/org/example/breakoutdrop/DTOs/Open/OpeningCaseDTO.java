@@ -1,4 +1,4 @@
-package org.example.breakoutdrop.DTOs;
+package org.example.breakoutdrop.DTOs.Open;
 
 public record OpeningCaseDTO(
         Long userId,

@@ -3,7 +3,7 @@ package org.example.breakoutdrop.Services.ApplicationServices;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateInventoryDTO;
-import org.example.breakoutdrop.DTOs.OpeningCaseDTO;
+import org.example.breakoutdrop.DTOs.Open.OpeningCaseDTO;
 import org.example.breakoutdrop.Entities.Case;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Entities.SystemWallet;
@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 @Service
 @Slf4j
@@ -41,7 +40,7 @@ public class OpenCaseService {
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Transactional
-    public void userOpeningCase(OpeningCaseDTO openingCaseDTO) {
+    public Skin userOpeningCase(OpeningCaseDTO openingCaseDTO) {
         log.info("Попытка открытия кейса");
         try {
             User user = userService.findUserById(openingCaseDTO.userId());
@@ -63,9 +62,9 @@ public class OpenCaseService {
 
             transactionService.createWinTransaction(user, wonSkin.getPrice(), TransactionType.CASE_OPENING);
             inventoryService.createInventory(createInventoryDTO);
-
             //transactionService.createTransactionLog(openingCaseDTO.userId(), openingCaseDTO.caseId(), wonSkin.getId(), oldBalance, );
             log.info("Кейс успешно открыт. Выпавший предмет: {}", wonSkin);
+            return wonSkin;
         } catch (Exception e) {
             log.error("Ошибка при открытии кейса");
             throw e;

@@ -24,7 +24,7 @@ public class CaseService {
     private final CaseRepository caseRepository;
 
     @Transactional
-    public void createCase(CreateCaseDTO createCaseDTO) {
+    public Case createCase(CreateCaseDTO createCaseDTO) {
         log.info("Попытка создания кейса");
         try {
             Case newCase = new Case();
@@ -40,6 +40,7 @@ public class CaseService {
             caseRepository.save(newCase);
 
             log.info("Кейс успешно создан");
+            return newCase;
         } catch (Exception e) {
             log.error("Ошибка при создании кейса");
             throw e;
@@ -47,7 +48,7 @@ public class CaseService {
     }
 
     @Transactional
-    public void deleteCase(Long id) {
+    public Case deleteCase(Long id) {
         log.info("Попытка удаления кейса");
         try {
             Case newCase = caseRepository.findById(id).orElseThrow(() -> new NotFound404("Кейс не найден"));
@@ -55,6 +56,7 @@ public class CaseService {
             caseRepository.delete(newCase);
 
             log.info("Кейс успешно удален");
+            return newCase;
         } catch (Exception e) {
             log.error("Ошибка при удалении кейса");
             throw e;

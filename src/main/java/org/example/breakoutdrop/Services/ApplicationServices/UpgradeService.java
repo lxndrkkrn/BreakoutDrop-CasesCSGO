@@ -3,7 +3,7 @@ package org.example.breakoutdrop.Services.ApplicationServices;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateInventoryDTO;
-import org.example.breakoutdrop.DTOs.OpeningUpgradeDTO;
+import org.example.breakoutdrop.DTOs.Open.OpeningUpgradeDTO;
 import org.example.breakoutdrop.Entities.Inventory;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Entities.SystemWallet;
@@ -38,7 +38,7 @@ public class UpgradeService {
     private static final BigDecimal MIN_UPGRADE_CHANCE = new BigDecimal("0.01");
 
     @Transactional
-    public void upgradeSkin(OpeningUpgradeDTO openingUpgradeDTO) {
+    public Skin upgradeSkin(OpeningUpgradeDTO openingUpgradeDTO) {
         log.info("Попытка апгрейднуть скин");
         try {
             SystemWallet wallet = systemWalletRepository.findWithLock().orElseThrow(() -> new ServiceUnavailable503("Нет доступного сейфа"));
@@ -78,13 +78,15 @@ public class UpgradeService {
 
                 transactionService.createWinTransaction(user, wonSkin.getPrice(), TransactionType.UPGRADING);
 
-                log.info("Апгрейд успешный, скин добавлен в инвентарь");
+                log.info("Апгрейд успешный, скин добавлен в инвентарь ({})", wonSkin);
+                return wonSkin;
 
             } else {
                 log.info("Апгрейд неудачен, скин потерян");
             }
 
             log.info("Апгрейд успешно прошёл");
+            return null;
         } catch (Exception e) {
             log.error("Ошибка при апгрейдинге скина");
             throw e;

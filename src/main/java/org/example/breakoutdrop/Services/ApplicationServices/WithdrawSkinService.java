@@ -2,7 +2,8 @@ package org.example.breakoutdrop.Services.ApplicationServices;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.breakoutdrop.DTOs.SellSkinDTO;
+import org.example.breakoutdrop.DTOs.Sell.SellSkinDTO;
+import org.example.breakoutdrop.DTOs.Sell.WithdrawSkinDTO;
 import org.example.breakoutdrop.Entities.Inventory;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Entities.User;
@@ -24,11 +25,11 @@ public class WithdrawSkinService {
     private final TransactionService transactionService;
 
     @Transactional
-    public void withdrawSkin(SellSkinDTO sellSkinDTO) {
+    public void withdrawSkin(WithdrawSkinDTO withdrawSkinDTO) {
         log.info("Попытка вывода скина");
         try {
-            User user = userService.findUserById(sellSkinDTO.userId());
-            Skin skin = skinService.findSkinById(sellSkinDTO.skinId());
+            User user = userService.findUserById(withdrawSkinDTO.userId());
+            Skin skin = skinService.findSkinById(withdrawSkinDTO.skinId());
             Inventory inventory = inventoryService.findInventoryByUserAndSkin(user, skin);
 
             if (!inventory.getUser().getId().equals(user.getId())) {

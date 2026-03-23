@@ -1,7 +1,7 @@
 # ATTENTION DISCLAIMER: This project is intended for educational purposes only. It does not involve real money or items. The developer does not encourage gambling. This project is not created for commercial purposes; it demonstrates the deception of many online casinos and similar resources, and how their fraudulent and deceptive scripts work. DO NOT PLAY AT THE CASINO!
 
 # Breakout-Drop : Cases CS2
-Проект BreakoutDrop v1.5
+Проект BreakoutDrop v1.6
 
 ### Стек:
 - Java 21, Spring Boot 4
@@ -18,11 +18,10 @@
 - Продажа скинов (отдельный / все сразу)
 
 ### Нововведения:
-- Подключен Docker
-- Подключен PostgresSQL
+- Созданы контроллеры для каждого действия
 
 ### Микроизменения:
-- Добавлен обработчик ошибок, для случая, когда контракт невозможен по серверной причине
+- Исправлены мелкие баги
 
 ### В разработке:
 - ???

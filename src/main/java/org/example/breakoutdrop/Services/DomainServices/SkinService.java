@@ -26,7 +26,7 @@ public class SkinService {
     private final CaseRepository caseRepository;
 
     @Transactional
-    public void createSkin(CreateSkinDTO createSkinDTO) {
+    public Skin createSkin(CreateSkinDTO createSkinDTO) {
         log.info("Попытка созданрия скина");
         try {
             Skin skin = new Skin();
@@ -43,6 +43,7 @@ public class SkinService {
             skinRepository.save(skin);
 
             log.info("Скин успешно создан");
+            return skin;
         } catch (Exception e) {
             log.error("Ошибка при создании скина");
             throw e;
@@ -99,7 +100,7 @@ public class SkinService {
     }
 
     @Transactional
-    public void addSkinInCase(Long id, List<Long> caseList) {
+    public void addSkinInCases(Long id, List<Long> caseList) {
         log.info("Попытка добавления скина в кейс");
         try {
             Skin skin = skinRepository.findById(id).orElseThrow(() -> new NotFound404("Скин не найден"));

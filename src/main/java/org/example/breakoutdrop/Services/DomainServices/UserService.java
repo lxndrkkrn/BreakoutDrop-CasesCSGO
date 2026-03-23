@@ -22,7 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createUser(CreateUserDTO createUserDTO) {
+    public User createUser(CreateUserDTO createUserDTO) {
         log.info("Попытка создания пользователя");
         try {
             User user = new User();
@@ -35,6 +35,7 @@ public class UserService {
             userRepository.save(user);
 
             log.info("Пользователь успешно создан");
+            return user;
         } catch (Exception e) {
             log.error("Ошибка при создании пользователя");
             throw e;

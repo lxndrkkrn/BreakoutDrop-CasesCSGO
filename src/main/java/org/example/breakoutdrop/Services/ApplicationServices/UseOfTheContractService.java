@@ -3,7 +3,7 @@ package org.example.breakoutdrop.Services.ApplicationServices;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateInventoryDTO;
-import org.example.breakoutdrop.DTOs.OpeningContractDTO;
+import org.example.breakoutdrop.DTOs.Open.OpeningContractDTO;
 import org.example.breakoutdrop.Entities.Inventory;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Entities.SystemWallet;
@@ -46,7 +46,7 @@ public class UseOfTheContractService {
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Transactional
-    public void useOfTheContractService(OpeningContractDTO openingContractDTO) {
+    public Skin useOfTheContract(OpeningContractDTO openingContractDTO) {
         log.info("Попытка сделать контракт");
         try {
             SystemWallet wallet = systemWalletRepository.findWithLock().orElseThrow(() -> new ServiceUnavailable503("Нет доступного сейфа"));
@@ -91,6 +91,7 @@ public class UseOfTheContractService {
             inventoryService.createInventory(createInventoryDTO);
 
             log.info("Контракт успешно создан, выпавший скин: {}; забранные скины: {}", wonSkin, skins);
+            return wonSkin;
         } catch (Exception e) {
             log.error("Ошибка при создании контракта: {}", openingContractDTO);
             throw e;
