@@ -37,11 +37,16 @@ public class UserService implements UserDetailsService {
         org.example.breakoutdrop.Entities.User user = userRepository.findByName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + username));
 
+        // Превращаем Set<RoleRecord> в массив строк (названия ролей)
+        String[] roles = user.getRoles().stream()
+                .map(role -> role.name().replace("ROLE_", "")) // Обращаемся к методу name() рекорда
+                .toArray(String[]::new);
+
         // Возвращаем объект User, который понимает Spring Security
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getName())
                 .password(user.getPassword())
-                .authorities(user.getRole().name()) // роль
+                .roles(roles) // Метод .roles() сам добавит префикс ROLE_
                 .build();
     }
 
@@ -56,7 +61,7 @@ public class UserService implements UserDetailsService {
             user.setPassword(passwordEncoder.encode(createUserDTO.password()));
             user.setTradeURL(createUserDTO.tradeURL());
 
-            user.setRole(Role.ROLE_USER);
+            user.setRoles(createUserDTO.roles());
 
             userRepository.save(user);
 
