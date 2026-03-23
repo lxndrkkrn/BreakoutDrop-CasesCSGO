@@ -1,10 +1,12 @@
 package org.example.breakoutdrop.Controllers.User;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.breakoutdrop.Services.ApplicationServices.OpenCaseService;
 import org.example.breakoutdrop.Services.ApplicationServices.ReplenishmentOfBalanceService;
 import org.example.breakoutdrop.Services.DomainServices.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -21,28 +23,32 @@ public class BalanceController {
     private ReplenishmentOfBalanceService replenishmentOfBalanceService;
 
     @PatchMapping("/set-balance/{id}")
-    public ResponseEntity<?> setBalance(@PathVariable Long id, @RequestBody BigDecimal balance) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
+    public ResponseEntity<?> setBalance(@Valid @PathVariable Long id, @RequestBody BigDecimal balance) {
         userService.setBalanceToUser(id, balance);
 
         return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/add-balance/{id}")
-    public ResponseEntity<?> addBalance(@PathVariable Long id, @RequestBody BigDecimal balance) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
+    public ResponseEntity<?> addBalance(@Valid @PathVariable Long id, @RequestBody BigDecimal balance) {
         userService.addBalanceToUser(id, balance);
 
         return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/take-balance/{id}")
-    public ResponseEntity<?> takeBalance(@PathVariable Long id, @RequestBody BigDecimal balance) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
+    public ResponseEntity<?> takeBalance(@Valid @PathVariable Long id, @RequestBody BigDecimal balance) {
         userService.takeBalanceToUser(id, balance);
 
         return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/p2p-add-balance/{id}")
-    public ResponseEntity<?> p2pAddBalance(@PathVariable Long id, @RequestBody BigDecimal balance) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
+    public ResponseEntity<?> p2pAddBalance(@Valid @PathVariable Long id, @RequestBody BigDecimal balance) {
         replenishmentOfBalanceService.p2pAddBalance(id, balance);
 
         return ResponseEntity.accepted().build();

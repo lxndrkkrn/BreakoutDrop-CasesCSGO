@@ -1,10 +1,12 @@
 package org.example.breakoutdrop.Controllers.Game;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.breakoutdrop.DTOs.Open.OpeningUpgradeDTO;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Services.ApplicationServices.UpgradeService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,7 +19,8 @@ public class UpgradeController {
     private final UpgradeService upgradeService;
 
     @PostMapping()
-    public ResponseEntity<?> upgradeSkin(@RequestBody OpeningUpgradeDTO openingUpgradeDTO) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> upgradeSkin(@Valid @RequestBody OpeningUpgradeDTO openingUpgradeDTO) {
         Skin wonSkin = upgradeService.upgradeSkin(openingUpgradeDTO);
 
         return ResponseEntity.ok(wonSkin);

@@ -1,12 +1,14 @@
 # ATTENTION DISCLAIMER: This project is intended for educational purposes only. It does not involve real money or items. The developer does not encourage gambling. This project is not created for commercial purposes; it demonstrates the deception of many online casinos and similar resources, and how their fraudulent and deceptive scripts work. DO NOT PLAY AT THE CASINO!
 
 # Breakout-Drop : Cases CS2
-Проект BreakoutDrop v1.6
+Проект BreakoutDrop v1.7
 
 ### Стек:
 - Java 21, Spring Boot 4
-- Spring Data JPA, PostgresSQL
-- Lombok, Slf4j, Docker, pgAdmin 4
+- Spring Data JPA, PostgresSQL, pgAdmin 4
+- Lombok, Slf4j
+- Docker
+- Spring Security
 
 ### Функционал:
 - Создание / Удаление пользователей
@@ -18,10 +20,11 @@
 - Продажа скинов (отдельный / все сразу)
 
 ### Нововведения:
-- Созданы контроллеры для каждого действия
+- Добавлен Spring Security (Основа)
+- Добавлены Роли (USER, YT, MODER, ADMIN и сервисный SERVICE)
 
 ### Микроизменения:
-- Исправлены мелкие баги
+- Ещё исправлены мелкие баги
 
 ### В разработке:
 - ???

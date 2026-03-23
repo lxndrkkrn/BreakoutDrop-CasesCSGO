@@ -9,4 +9,8 @@ public record CreateUserDTO(
         @NotNull String password,
         @NotNull @Email String email,
         @NotNull @URL String tradeURL
-) { }
+) {
+    public CreateUserDTO() {
+        this("", "", "", "");
+    }
+}

@@ -1,10 +1,12 @@
 package org.example.breakoutdrop.Controllers.Game;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.breakoutdrop.DTOs.Open.OpeningContractDTO;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Services.ApplicationServices.UseOfTheContractService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,7 +19,8 @@ public class ContractController {
     private final UseOfTheContractService useOfTheContractService;
 
     @PostMapping()
-    public ResponseEntity<?> useOfTheContract(@RequestBody OpeningContractDTO openingContractDTO) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> useOfTheContract(@Valid @RequestBody OpeningContractDTO openingContractDTO) {
         Skin wonSkin = useOfTheContractService.useOfTheContract(openingContractDTO);
 
         return ResponseEntity.ok(wonSkin);

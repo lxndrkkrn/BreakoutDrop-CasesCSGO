@@ -1,5 +1,6 @@
 package org.example.breakoutdrop.Controllers.User;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.breakoutdrop.DTOs.Sell.SellAllSkinsDTO;
 import org.example.breakoutdrop.DTOs.Sell.SellSkinDTO;
@@ -7,6 +8,7 @@ import org.example.breakoutdrop.DTOs.Sell.WithdrawSkinDTO;
 import org.example.breakoutdrop.Services.ApplicationServices.SalesService;
 import org.example.breakoutdrop.Services.ApplicationServices.WithdrawSkinService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,21 +22,24 @@ public class SaleController {
     private final WithdrawSkinService withdrawSkinService;
 
     @PostMapping("/skin")
-    public ResponseEntity<?> sellSkin(@RequestBody SellSkinDTO sellSkinDTO) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> sellSkin(@Valid @RequestBody SellSkinDTO sellSkinDTO) {
         salesService.sellSkin(sellSkinDTO);
 
         return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/skin/all-skins")
-    public ResponseEntity<?> sellAllSkin(@RequestBody SellAllSkinsDTO sellAllSkinsDTO) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> sellAllSkin(@Valid @RequestBody SellAllSkinsDTO sellAllSkinsDTO) {
         salesService.sellAllSkins(sellAllSkinsDTO);
 
         return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/skin/withdraw")
-    public ResponseEntity<?> withdrawSkin(@RequestBody WithdrawSkinDTO withdrawSkinDTO) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> withdrawSkin(@Valid @RequestBody WithdrawSkinDTO withdrawSkinDTO) {
         withdrawSkinService.withdrawSkin(withdrawSkinDTO);
 
         return ResponseEntity.accepted().build();

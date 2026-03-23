@@ -4,9 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateUserDTO;
 import org.example.breakoutdrop.Entities.User;
+import org.example.breakoutdrop.Enums.Role;
 import org.example.breakoutdrop.Errors.Client.NegativeBalance;
 import org.example.breakoutdrop.Errors.ClientHTTP.NotFound404;
 import org.example.breakoutdrop.Repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +23,27 @@ import java.math.BigDecimal;
 @Slf4j
 @RequiredArgsConstructor
 
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("Попытка входа пользователя: {}", username);
+
+        // Ищем пользователя в базе.
+        // Важно: если в Entity поле называется 'name', используй findByName
+        org.example.breakoutdrop.Entities.User user = userRepository.findByName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + username));
+
+        // Возвращаем объект User, который понимает Spring Security
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getName())
+                .password(user.getPassword())
+                .authorities(user.getRole().name()) // роль
+                .build();
+    }
 
     @Transactional
     public User createUser(CreateUserDTO createUserDTO) {
@@ -29,8 +53,10 @@ public class UserService {
 
             user.setName(createUserDTO.name());
             user.setEmail(createUserDTO.email());
-            user.setPassword(createUserDTO.password());
+            user.setPassword(passwordEncoder.encode(createUserDTO.password()));
             user.setTradeURL(createUserDTO.tradeURL());
+
+            user.setRole(Role.ROLE_USER);
 
             userRepository.save(user);
 
