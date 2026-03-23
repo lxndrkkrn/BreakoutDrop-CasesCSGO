@@ -1,0 +1,6 @@
+INSERT INTO roles (name) VALUES ('ROLE_USER');
+INSERT INTO roles (name) VALUES ('ROLE_ADMIN');
+INSERT INTO roles (name) VALUES ('ROLE_MODER');
+INSERT INTO roles (name) VALUES ('ROLE_YT');
+INSERT INTO roles (name) VALUES ('ROLE_SERVICE');
+-- и так далее для всех ролей из твоего Enum

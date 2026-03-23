@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.breakoutdrop.Enums.Role;
+import org.example.breakoutdrop.Entities.Role;
 import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;

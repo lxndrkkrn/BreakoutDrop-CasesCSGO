@@ -3,10 +3,11 @@ package org.example.breakoutdrop.Services.DomainServices;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateUserDTO;
+import org.example.breakoutdrop.Entities.Role;
 import org.example.breakoutdrop.Entities.User;
-import org.example.breakoutdrop.Enums.Role;
 import org.example.breakoutdrop.Errors.Client.NegativeBalance;
 import org.example.breakoutdrop.Errors.ClientHTTP.NotFound404;
+import org.example.breakoutdrop.Repositories.RoleRepository;
 import org.example.breakoutdrop.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,26 +30,28 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("Попытка входа пользователя: {}", username);
 
-        // Ищем пользователя в базе.
-        // Важно: если в Entity поле называется 'name', используй findByName
+        // 1. Ищем нашего пользователя в БД
         org.example.breakoutdrop.Entities.User user = userRepository.findByName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + username));
 
-        // Превращаем Set<RoleRecord> в массив строк (названия ролей)
+        // 2. Превращаем Set<Role> (сущности) в массив строк для Spring Security
+        // Мы берем имя из сущности Role (например, "ROLE_USER")
         String[] roles = user.getRoles().stream()
-                .map(role -> role.name().replace("ROLE_", "")) // Обращаемся к методу name() рекорда
+                .map(role -> role.getName()) // Берем "ROLE_USER", "ROLE_ADMIN" и т.д.
                 .toArray(String[]::new);
 
-        // Возвращаем объект User, который понимает Spring Security
+        // 3. Собираем объект UserDetails
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getName())
                 .password(user.getPassword())
-                .roles(roles) // Метод .roles() сам добавит префикс ROLE_
+                // ИСПОЛЬЗУЕМ .authorities() вместо .roles(), чтобы не было дублей ROLE_ROLE_
+                .authorities(roles)
                 .build();
     }
 
@@ -61,7 +66,12 @@ public class UserService implements UserDetailsService {
             user.setPassword(passwordEncoder.encode(createUserDTO.password()));
             user.setTradeURL(createUserDTO.tradeURL());
 
-            user.setRoles(createUserDTO.roles());
+            Set<Role> userRoles = createUserDTO.roles().stream()
+                    .map(roleEnum -> roleRepository.findByName(roleEnum.name()) // .name() вернет "ROLE_USER"
+                            .orElseThrow(() -> new RuntimeException("Роль не найдена в БД: " + roleEnum.name())))
+                    .collect(Collectors.toSet());
+
+            user.setRoles(userRoles);
 
             userRepository.save(user);
 
