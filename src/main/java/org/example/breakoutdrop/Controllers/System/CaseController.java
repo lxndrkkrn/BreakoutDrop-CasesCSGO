@@ -2,6 +2,7 @@ package org.example.breakoutdrop.Controllers.System;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.breakoutdrop.DTOs.Controller.CategoryIdsRequest;
 import org.example.breakoutdrop.DTOs.Create.CreateCaseDTO;
 import org.example.breakoutdrop.Entities.Case;
 import org.example.breakoutdrop.Services.ApplicationServices.OpenCaseService;
@@ -11,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -50,6 +52,14 @@ public class CaseController {
     @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
     public ResponseEntity<?> setNameCase(@Valid @PathVariable Long id, @RequestBody String name) {
         caseService.setNameToCase(id, name);
+
+        return ResponseEntity.accepted().build();
+    }
+
+    @PatchMapping("/set-category/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
+    public ResponseEntity<?> setCategoryCase(@Valid @PathVariable Long id, @RequestBody CategoryIdsRequest categoryIds) {
+        caseService.setCategoryToCase(id, categoryIds.categoryIdsRequest());
 
         return ResponseEntity.accepted().build();
     }

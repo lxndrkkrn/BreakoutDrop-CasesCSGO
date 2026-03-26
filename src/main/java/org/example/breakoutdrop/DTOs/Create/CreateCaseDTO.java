@@ -9,5 +9,6 @@ import java.util.List;
 public record CreateCaseDTO(
     @NotNull String name,
     @NotNull @Positive BigDecimal price,
-    List<Long> skinIds
+    List<Long> skinIds,
+    List<Long> categoryIds
 ) { }

@@ -4,15 +4,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateCaseDTO;
 import org.example.breakoutdrop.Entities.Case;
+import org.example.breakoutdrop.Entities.Category;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Errors.ClientHTTP.NotFound404;
 import org.example.breakoutdrop.Repositories.CaseRepository;
+import org.example.breakoutdrop.Repositories.CategoryRepository;
 import org.example.breakoutdrop.Repositories.SkinRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 
 @Service
 @Slf4j
@@ -22,6 +25,7 @@ public class CaseService {
 
     private final SkinRepository skinRepository;
     private final CaseRepository caseRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     public Case createCase(CreateCaseDTO createCaseDTO) {
@@ -33,9 +37,12 @@ public class CaseService {
                 throw new NotFound404("Скины не найдены");
             }
 
+            List<Category> categoryList = categoryRepository.findAllById(createCaseDTO.categoryIds());
+
             newCase.setPrice(createCaseDTO.price());
             newCase.setName(createCaseDTO.name());
             newCase.setSkinList(skinList);
+            newCase.setCategoryList(categoryList);
 
             caseRepository.save(newCase);
 
@@ -93,6 +100,24 @@ public class CaseService {
             log.info("Название кейса успешно изменена");
         } catch (Exception e) {
             log.error("Ошибка при установки названия кейса");
+            throw e;
+        }
+    }
+
+    @Transactional
+    public void setCategoryToCase(Long id, List<Long> categoryIds) {
+        log.info("Попытка установки категорий для кейса");
+        try {
+            Case newCase = caseRepository.findById(id).orElseThrow(() -> new NotFound404("Кейс не найден"));
+            List<Category> newCategories = categoryRepository.findAllById(categoryIds);
+
+            newCase.setCategoryList(newCategories);
+
+            caseRepository.save(newCase);
+
+            log.info("Категории кейса успешно изменены");
+        } catch (Exception e) {
+            log.error("Ошибка при установки категорий на кейс");
             throw e;
         }
     }

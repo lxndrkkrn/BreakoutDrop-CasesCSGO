@@ -1,7 +1,7 @@
 # ATTENTION DISCLAIMER: This project is intended for educational purposes only. It does not involve real money or items. The developer does not encourage gambling. This project is not created for commercial purposes; it demonstrates the deception of many online casinos and similar resources, and how their fraudulent and deceptive scripts work. DO NOT PLAY AT THE CASINO!
 
 # Breakout-Drop : Cases CS2
-Проект BreakoutDrop v1.7
+Проект BreakoutDrop v1.8
 
 ### Стек:
 - Java 21, Spring Boot 4
@@ -20,14 +20,13 @@
 - Продажа скинов (отдельный / все сразу)
 
 ### Нововведения:
-- Добавлен Spring Security (Основа)
-- Добавлены Роли (USER, YT, MODER, ADMIN и сервисный SERVICE)
-- Проверки на наличие Авторизации/Роли/Анлогина на методы в контроллерах
+- Добавлена новая система - категории кейсов
+- Новая энтити Category
+- Новый сервис для категории
+- Новый контроллер для категории
 
 ### Микроизменения:
-- Пользователь может поддерживать несколько ролей
-- Автоматическая подгрузка основных ролей в базу, через data.sql
-- я устал 22:33
+- Нету
 
 ### В разработке:
 - ???

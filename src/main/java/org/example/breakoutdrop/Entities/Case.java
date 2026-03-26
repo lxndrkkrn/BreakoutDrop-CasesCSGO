@@ -33,4 +33,7 @@ public class Case {
     @ManyToMany(mappedBy = "cases")
     private List<Skin> skinList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Category> categoryList;
+
 }
