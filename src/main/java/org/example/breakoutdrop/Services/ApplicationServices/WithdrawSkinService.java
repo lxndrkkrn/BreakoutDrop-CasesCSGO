@@ -2,8 +2,7 @@ package org.example.breakoutdrop.Services.ApplicationServices;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.breakoutdrop.DTOs.Sell.SellSkinDTO;
-import org.example.breakoutdrop.DTOs.Sell.WithdrawSkinDTO;
+import org.example.breakoutdrop.DTOs.Balance.Sell.WithdrawSkinDTO;
 import org.example.breakoutdrop.Entities.Inventory;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Entities.User;

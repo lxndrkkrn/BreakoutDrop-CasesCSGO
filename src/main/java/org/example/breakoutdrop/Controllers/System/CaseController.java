@@ -64,4 +64,12 @@ public class CaseController {
         return ResponseEntity.accepted().build();
     }
 
+    @PatchMapping("/set-picture/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
+    public ResponseEntity<?> setPictureCase(@Valid @PathVariable Long id, @RequestBody String url) {
+        caseService.setPictureToCase(id, url);
+
+        return ResponseEntity.accepted().build();
+    }
+
 }

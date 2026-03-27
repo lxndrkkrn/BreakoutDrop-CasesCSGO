@@ -1,7 +1,7 @@
 # ATTENTION DISCLAIMER: This project is intended for educational purposes only. It does not involve real money or items. The developer does not encourage gambling. This project is not created for commercial purposes; it demonstrates the deception of many online casinos and similar resources, and how their fraudulent and deceptive scripts work. DO NOT PLAY AT THE CASINO!
 
 # Breakout-Drop : Cases CS2
-Проект BreakoutDrop v1.8
+Проект BreakoutDrop v1.9
 
 ### Стек:
 - Java 21, Spring Boot 4
@@ -18,15 +18,14 @@
 - Апгрейдинг скинов
 - Контракт обмена
 - Продажа скинов (отдельный / все сразу)
+- Создание / Удаление промо-кодов
+- Применение промо-кодов для P2P пополнению
 
 ### Нововведения:
-- Добавлена новая система - категории кейсов
-- Новая энтити Category
-- Новый сервис для категории
-- Новый контроллер для категории
+- Добавлена новая система промо-кодов
 
 ### Микроизменения:
-- Нету
+- Немного изменён контроллер баланса
 
 ### В разработке:
 - ???

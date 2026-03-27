@@ -2,7 +2,7 @@ package org.example.breakoutdrop.Controllers.Game;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.breakoutdrop.DTOs.Open.OpeningUpgradeDTO;
+import org.example.breakoutdrop.DTOs.Balance.Open.OpeningUpgradeDTO;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Services.ApplicationServices.UpgradeService;
 import org.springframework.http.ResponseEntity;

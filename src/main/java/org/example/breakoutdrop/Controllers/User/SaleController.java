@@ -2,9 +2,9 @@ package org.example.breakoutdrop.Controllers.User;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.breakoutdrop.DTOs.Sell.SellAllSkinsDTO;
-import org.example.breakoutdrop.DTOs.Sell.SellSkinDTO;
-import org.example.breakoutdrop.DTOs.Sell.WithdrawSkinDTO;
+import org.example.breakoutdrop.DTOs.Balance.Sell.SellAllSkinsDTO;
+import org.example.breakoutdrop.DTOs.Balance.Sell.SellSkinDTO;
+import org.example.breakoutdrop.DTOs.Balance.Sell.WithdrawSkinDTO;
 import org.example.breakoutdrop.Services.ApplicationServices.SalesService;
 import org.example.breakoutdrop.Services.ApplicationServices.WithdrawSkinService;
 import org.springframework.http.ResponseEntity;

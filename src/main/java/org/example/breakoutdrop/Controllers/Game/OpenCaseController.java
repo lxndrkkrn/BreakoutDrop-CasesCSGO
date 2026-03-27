@@ -2,7 +2,7 @@ package org.example.breakoutdrop.Controllers.Game;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.breakoutdrop.DTOs.Open.OpeningCaseDTO;
+import org.example.breakoutdrop.DTOs.Balance.Open.OpeningCaseDTO;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Services.ApplicationServices.OpenCaseService;
 import org.example.breakoutdrop.Services.DomainServices.CaseService;

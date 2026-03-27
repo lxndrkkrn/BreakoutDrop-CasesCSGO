@@ -40,6 +40,7 @@ public class CaseService {
             List<Category> categoryList = categoryRepository.findAllById(createCaseDTO.categoryIds());
 
             newCase.setPrice(createCaseDTO.price());
+            newCase.setPictureCase(createCaseDTO.pictureCase());
             newCase.setName(createCaseDTO.name());
             newCase.setSkinList(skinList);
             newCase.setCategoryList(categoryList);
@@ -118,6 +119,23 @@ public class CaseService {
             log.info("Категории кейса успешно изменены");
         } catch (Exception e) {
             log.error("Ошибка при установки категорий на кейс");
+            throw e;
+        }
+    }
+
+    @Transactional
+    public void setPictureToCase(Long id, String url) {
+        log.info("Попытка установки картинки для кейса");
+        try {
+            Case newCase = caseRepository.findById(id).orElseThrow(() -> new NotFound404("Кейс не найден"));
+
+            newCase.setPictureCase(url);
+
+            caseRepository.save(newCase);
+
+            log.info("Картинка кейса успешно изменена");
+        } catch (Exception e) {
+            log.error("Ошибка при установки картинки на кейс");
             throw e;
         }
     }

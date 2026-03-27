@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,6 +30,10 @@ public class Case {
     @Column(nullable = false)
     @Positive
     private BigDecimal price;
+
+    @NotNull
+    @URL(message = "Должна быть ссылка")
+    private String pictureCase;
 
     @ManyToMany(mappedBy = "cases")
     private List<Skin> skinList = new ArrayList<>();

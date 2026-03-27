@@ -1,4 +1,4 @@
-package org.example.breakoutdrop.DTOs.Open;
+package org.example.breakoutdrop.DTOs.Balance.Open;
 
 public record OpeningUpgradeDTO(
         Long userId,

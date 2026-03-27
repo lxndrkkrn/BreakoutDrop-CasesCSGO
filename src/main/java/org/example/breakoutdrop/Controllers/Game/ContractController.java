@@ -2,7 +2,7 @@ package org.example.breakoutdrop.Controllers.Game;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.breakoutdrop.DTOs.Open.OpeningContractDTO;
+import org.example.breakoutdrop.DTOs.Balance.Open.OpeningContractDTO;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Services.ApplicationServices.UseOfTheContractService;
 import org.springframework.http.ResponseEntity;

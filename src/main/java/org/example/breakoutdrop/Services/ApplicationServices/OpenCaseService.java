@@ -3,7 +3,7 @@ package org.example.breakoutdrop.Services.ApplicationServices;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.breakoutdrop.DTOs.Create.CreateInventoryDTO;
-import org.example.breakoutdrop.DTOs.Open.OpeningCaseDTO;
+import org.example.breakoutdrop.DTOs.Balance.Open.OpeningCaseDTO;
 import org.example.breakoutdrop.Entities.Case;
 import org.example.breakoutdrop.Entities.Skin;
 import org.example.breakoutdrop.Entities.SystemWallet;
